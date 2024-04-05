@@ -1,9 +1,6 @@
 package org.ccondaeapi.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
-import jakarta.persistence.Id
+import jakarta.persistence.*
 
 @Entity(name = "category")
 class Category (
@@ -11,5 +8,8 @@ class Category (
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
     var name: String? = null,
-    var count: Int? = null
+    var count: Int? = null,
+
+    @field:OneToMany(mappedBy = "category")
+    var questions: List<QuestionCategory> = listOf()
 )
