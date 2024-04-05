@@ -14,7 +14,7 @@ class Question(
         var likeCount: Long = 0,
         var viewCount: Long = 0,
 
-        @field: OneToMany(mappedBy = "question")
+        @field: OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
         var categories: List<QuestionCategory> = listOf(),
 
         @field: JoinColumn(name = "id")

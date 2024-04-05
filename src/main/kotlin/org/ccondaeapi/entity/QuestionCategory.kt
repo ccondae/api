@@ -1,18 +1,19 @@
 package org.ccondaeapi.entity
 
-import jakarta.persistence.Entity
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import com.fasterxml.jackson.annotation.JsonIgnore
+import jakarta.persistence.*
 
 @Entity(name = "question_category")
 class QuestionCategory(
         @field:Id
+        @field:GeneratedValue(strategy = GenerationType.IDENTITY)
+        var id: Long? = null,
         @field:ManyToOne
         @field:JoinColumn(name = "question_id")
+        @JsonIgnore
         var question: Question? = null,
         @field:ManyToOne
         @field:JoinColumn(name = "category_id")
+        @JsonIgnore
         var category: Category? = null,
 )
