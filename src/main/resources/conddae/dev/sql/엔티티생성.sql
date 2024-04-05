@@ -4,6 +4,7 @@ CREATE TABLE question (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     title TEXT,
     text MEDIUMTEXT,
+    like_count BIGINT DEFAULT 0,
     created_at TIMESTAMP,
     view_count BIGINT DEFAULT 0
 );
@@ -11,8 +12,9 @@ CREATE TABLE question (
 CREATE TABLE comment (
     id BIGINT PRIMARY KEY AUTO_INCREMENT,
     text MEDIUMTEXT,
-    question_id BIGINT,
+    like_count BIGINT DEFAULT 0,
     created_at TIMESTAMP,
+    question_id BIGINT,
     FOREIGN KEY (question_id) REFERENCES question(id)
 );
 

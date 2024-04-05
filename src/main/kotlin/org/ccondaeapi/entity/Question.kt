@@ -13,6 +13,7 @@ class Question(
         var title: String? = null,
         var text: String? = null,
         var createdAt: LocalDateTime? = null,
+        var likeCount: Long = 0,
         var viewCount: Long = 0,
 
         @field: OneToMany(mappedBy = "question")
