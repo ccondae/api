@@ -9,6 +9,7 @@ class QuestionService(
         private val questionRepository: QuestionRepository
 ) {
     fun save(question: Question): Question {
+        question.let { it.createdAt = it.createdAt ?: java.time.LocalDateTime.now() }
         return questionRepository.save(question)
     }
 
