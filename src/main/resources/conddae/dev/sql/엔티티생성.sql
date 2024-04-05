@@ -20,7 +20,7 @@ CREATE TABLE comment (
 
 create table question_category (
     question_id BIGINT,
-    category_id INT,
+    category_id BIGINT,
     PRIMARY KEY (question_id, category_id),
     FOREIGN KEY (question_id) REFERENCES question(id),
     FOREIGN KEY (category_id) REFERENCES category(id)
