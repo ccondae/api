@@ -2,6 +2,7 @@ package org.ccondaeapi.application
 
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
+import org.ccondaeapi.domain.dto.QuestionSaveDto
 import org.ccondaeapi.entity.Question
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -16,13 +17,10 @@ class QuestionServiceTest(
     @Test
     fun 저장_테스트() {
         // given
-        var question = Question(
+        var question = QuestionSaveDto(
                 title = "Sample Title",
                 text = "Sample Text",
-                likeCount = 0,
-                viewCount = 0,
-                categories = listOf(),
-                comments = listOf()
+                categoryIds = listOf(1,2)
         )
 
         // when
@@ -31,19 +29,17 @@ class QuestionServiceTest(
         // then
         assertThat(savedQuestion.id).isNotNull()
         assertThat(savedQuestion.createdAt).isNotNull()
+        assertThat(savedQuestion.categories.count()).isEqualTo(2)
         assertThat(savedQuestion.title).isEqualTo(question.title)
     }
 
     @Test
     fun ID로_찾기_TEST() {
         // given
-        var question = Question(
+        var question = QuestionSaveDto(
                 title = "Sample Title",
                 text = "Sample Text",
-                likeCount = 0,
-                viewCount = 0,
-                categories = listOf(),
-                comments = listOf()
+                categoryIds = listOf(1,2)
         )
 
         // when

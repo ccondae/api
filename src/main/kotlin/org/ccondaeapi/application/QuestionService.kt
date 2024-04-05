@@ -1,16 +1,19 @@
 package org.ccondaeapi.application
 
+import org.ccondaeapi.domain.converter.QuestionConverter
 import org.ccondaeapi.entity.Question
+import org.ccondaeapi.domain.dto.QuestionSaveDto
 import org.ccondaeapi.infrastructure.repository.QuestionRepository
 import org.springframework.stereotype.Service
 
 @Service
 class QuestionService(
-        private val questionRepository: QuestionRepository
+        private val questionRepository: QuestionRepository,
+        private val questionConverter: QuestionConverter
 ) {
-    fun save(question: Question): Question {
-        question.let { it.createdAt = it.createdAt ?: java.time.LocalDateTime.now() }
-        return questionRepository.save(question)
+    fun save(question: QuestionSaveDto): Question {
+        val entity = questionConverter.convertToEntity(question)
+        return questionRepository.save(entity)
     }
 
     fun findById(id: Long): Question {

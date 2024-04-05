@@ -1,8 +1,6 @@
 package org.ccondaeapi.entity
 
 import jakarta.persistence.*
-import org.ccondaeapi.entity.Category
-import org.ccondaeapi.entity.Comment
 import java.time.LocalDateTime
 
 @Entity(name = "question")
