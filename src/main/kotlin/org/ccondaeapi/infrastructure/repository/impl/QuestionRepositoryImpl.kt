@@ -45,6 +45,25 @@ class QuestionRepositoryImpl(
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
 
+    override fun getPopularQuestion(pageable: Pageable): Page<SimpleQuestionResponse> {
+        val qQuestion = QQuestion.question
+        val qComment = QComment.comment
+        val qQuestionCategory = QQuestionCategory.questionCategory
+        val questionsQuery = queryFactory.selectFrom(qQuestion)
+                .leftJoin(qQuestion.comments, qComment)
+                .join(qQuestion.categories, qQuestionCategory)
+                .orderBy(qQuestion.likeCount.desc())
+                .offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
+
+        val questions: List<Question> = questionsQuery.fetch()
+        val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
+
+        val count: Long = queryFactory.select(qQuestion.count()).from(qQuestion).fetchOne() ?: 0L
+
+        return PageableExecutionUtils.getPage(dtoList, pageable) { count }
+    }
+
     fun notAnsweredQuestion(): List<Question> {
         return queryFactory.selectFrom(question)
                 .leftJoin(question.comments, comment)

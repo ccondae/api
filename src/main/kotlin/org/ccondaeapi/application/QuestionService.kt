@@ -35,11 +35,25 @@ class QuestionService(
         return response
     }
 
+    fun like(id: Long) : QuestionDetailResponse {
+        val searched : Question  = questionRepository.findById(id).orElseThrow{
+            IllegalArgumentException("찾고자 하는 질문이 없습니다.")
+        }
+        searched.likeCount ++
+        val saved : Question = questionRepository.save(searched)
+        val response : QuestionDetailResponse = questionConverter.toDetailResponse(saved)
+        return response
+    }
+
     fun getDetail(id: Long): QuestionDetailResponse {
         var entity = questionRepository.findById(id).orElseThrow { IllegalArgumentException("해당 질문이 존재하지 않습니다.") }
         entity = increaseViewCount(entity)
         val response = questionConverter.toDetailResponse(entity)
         return response
+    }
+
+    fun getPopularContents(pageable: Pageable): Page<SimpleQuestionResponse> {
+        return questionRepository.getPopularQuestion(pageable)
     }
 
     private fun increaseViewCount(entity: Question): Question{

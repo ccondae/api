@@ -74,6 +74,7 @@ class QuestionConverter(
                 createdAt = question.createdAt,
                 likeCount = question.likeCount,
                 viewCount = question.viewCount,
+                commentCount = question.comments.size.toLong(),
                 categories = categories,
         )
 

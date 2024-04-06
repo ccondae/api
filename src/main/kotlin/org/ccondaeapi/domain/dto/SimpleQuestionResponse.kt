@@ -9,5 +9,6 @@ data class SimpleQuestionResponse(
         val createdAt: LocalDateTime?,
         val likeCount: Long = 0,
         val viewCount: Long = 0,
+        val commentCount: Long = 0,
         val categories: List<CategoryResponse>
 )

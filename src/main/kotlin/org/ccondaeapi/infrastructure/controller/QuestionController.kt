@@ -30,6 +30,11 @@ class QuestionController(
         return questionService.getDetail(id)
     }
 
+    @PatchMapping("/like/{id}")
+    fun like(@PathVariable id:Long) : QuestionDetailResponse {
+        return questionService.like(id)
+    }
+
     @PostMapping("/not-answered")
     fun notAnsweredQuestionByCategories(
             @RequestBody
@@ -46,4 +51,15 @@ class QuestionController(
     data class CategoryRequest(
             val categories: List<Long>
     )
+
+    @PostMapping("/popular")
+    fun getPopularQuestions(
+            @RequestParam(required = false, defaultValue = "10")
+            size: Int,
+            @RequestParam(required = false, defaultValue = "0")
+            page: Int,
+    ): Page<SimpleQuestionResponse> {
+        val pageable: Pageable = PageRequest.of(page, size)
+        return questionService.getPopularContents(pageable)
+    }
 }
