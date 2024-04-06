@@ -16,7 +16,7 @@ class CategoryService(
     }
 
     fun search(name: String): List<CategoryResponse> {
-        val responses: List<CategoryResponse> = categoryRepository.findByNameContainingIgnoreCase(name)
+        val responses: List<CategoryResponse> = categoryRepository.findByNameContainingIgnoreCaseOrderByCountDesc(name)
                 .map { categoryConverter.toResponse(it) }
         return responses
     }
@@ -26,5 +26,9 @@ class CategoryService(
         var categories = categoryRepository.findAllById(categoryIds)
         categories.forEach { it.count++  }
         categoryRepository.saveAll(categories)
+    }
+
+    fun getPopularCategories(): List<CategoryResponse> {
+        return categoryRepository.findAllByOrderByCountDesc().map { categoryConverter.toResponse(it) }
     }
 }

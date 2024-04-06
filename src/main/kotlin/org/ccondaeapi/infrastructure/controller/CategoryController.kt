@@ -21,4 +21,10 @@ class CategoryController(
         val result: List<CategoryResponse> = categoryService.search(name)
         return result
     }
+
+    @GetMapping("/popular")
+    fun getPopularCategories(): List<CategoryResponse> {
+        val result: List<CategoryResponse> = categoryService.getPopularCategories()
+        return result
+    }
 }
