@@ -1,6 +1,7 @@
 package org.ccondaeapi.infrastructure.controller
 
 import org.ccondaeapi.application.QuestionService
+import org.ccondaeapi.domain.dto.QuestionDetailResponse
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.domain.dto.QuestionUpload
 import org.springframework.data.domain.Page
@@ -18,15 +19,15 @@ class QuestionController(
             @RequestBody
             request: QuestionUpload
     ): SimpleQuestionResponse {
-        return questionService.save(request)
+        return questionService.upload(request)
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/detail/{id}")
     fun findById(
             @PathVariable
             id: Long
-    ): SimpleQuestionResponse {
-        return questionService.findById(id)
+    ): QuestionDetailResponse {
+        return questionService.getDetail(id)
     }
 
     @PostMapping("/not-answered")

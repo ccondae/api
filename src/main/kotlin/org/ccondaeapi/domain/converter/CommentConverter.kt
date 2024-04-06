@@ -5,7 +5,7 @@ import org.ccondaeapi.entity.Comment
 import org.springframework.stereotype.Component
 
 @Component
-class CommnetConverter{
+class CommentConverter{
     fun toResponse(comment: Comment): CommentResponse {
         return CommentResponse(
                 id = comment.id!!,

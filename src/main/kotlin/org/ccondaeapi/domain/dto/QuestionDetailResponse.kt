@@ -10,6 +10,7 @@ data class QuestionDetailResponse(
         val code: String,
         val purpose: String,
         val likeCount: Long,
+        val viewCount: Long,
         val createdAt: LocalDateTime?,
         val categories: List<CategoryResponse>,
         val comments: List<CommentResponse>

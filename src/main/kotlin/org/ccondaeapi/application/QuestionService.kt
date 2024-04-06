@@ -2,6 +2,7 @@ package org.ccondaeapi.application
 
 import jakarta.transaction.Transactional
 import org.ccondaeapi.domain.converter.QuestionConverter
+import org.ccondaeapi.domain.dto.QuestionDetailResponse
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.domain.dto.QuestionUpload
 import org.ccondaeapi.infrastructure.repository.QuestionCategoryRepository
@@ -18,7 +19,7 @@ class QuestionService(
         private val categoryService: CategoryService
 ) {
     @Transactional
-    fun save(question: QuestionUpload): SimpleQuestionResponse {
+    fun upload(question: QuestionUpload): SimpleQuestionResponse {
         // Entity 저장
         val entity = questionConverter.toEntity(question)
         val saved = questionRepository.save(entity)
@@ -33,9 +34,9 @@ class QuestionService(
         return response
     }
 
-    fun findById(id: Long): SimpleQuestionResponse {
+    fun getDetail(id: Long): QuestionDetailResponse {
         val entity = questionRepository.findById(id).orElseThrow { IllegalArgumentException("해당 질문이 존재하지 않습니다.") }
-        val response = questionConverter.toSimpleResponse(entity)
+        val response = questionConverter.toDetailResponse(entity)
         return response
     }
 

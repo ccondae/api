@@ -23,7 +23,7 @@ class QuestionServiceTest(
         )
 
         // when
-        var savedQuestion = questionService.save(question)
+        var savedQuestion = questionService.upload(question)
 
         // then
         assertThat(savedQuestion.id).isNotNull()
@@ -42,8 +42,8 @@ class QuestionServiceTest(
         )
 
         // when
-        var savedQuestion = questionService.save(question)
-        var searchedQuestion = questionService.findById(savedQuestion.id!!)
+        var savedQuestion = questionService.upload(question)
+        var searchedQuestion = questionService.getDetail(savedQuestion.id!!)
 
         // then
         assertThat(searchedQuestion.id).isNotNull()

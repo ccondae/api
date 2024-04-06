@@ -25,7 +25,7 @@ class QuestionRepositoryImplTest(
         )
 
         // when
-        var savedQuestion = questionService.save(question)
+        var savedQuestion = questionService.upload(question)
 
         // when
         val result = questionRepositoryImpl.notAnsweredQuestion()

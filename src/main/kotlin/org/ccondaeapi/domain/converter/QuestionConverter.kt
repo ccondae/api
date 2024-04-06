@@ -1,6 +1,7 @@
 package org.ccondaeapi.domain.converter
 
 import org.ccondaeapi.domain.dto.CategoryResponse
+import org.ccondaeapi.domain.dto.QuestionDetailResponse
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.domain.dto.QuestionUpload
 import org.ccondaeapi.entity.Question
@@ -12,7 +13,8 @@ import java.time.LocalDateTime
 @Component
 class QuestionConverter(
         private val categoryRepository: CategoryRepository,
-        private val categoryConverter: CategoryConverter
+        private val categoryConverter: CategoryConverter,
+        private val commentConverter: CommentConverter
 ) {
     fun toEntity(dto: QuestionUpload): Question {
         var categories = mutableListOf<QuestionCategory>()
@@ -34,6 +36,29 @@ class QuestionConverter(
             it.question = question
         }
         return question
+    }
+
+    fun toDetailResponse(question: Question): QuestionDetailResponse {
+        val categories = mutableListOf<CategoryResponse>()
+        question.categories.forEach {
+            it.category?.let { entity -> categories.add(categoryConverter.toResponse(entity)) }
+        }
+
+        val response: QuestionDetailResponse = QuestionDetailResponse(
+                id = question.id ?: 0,
+                title = question.title ?: "",
+                githubUrl = question.githubUrl ?: "",
+                content = question.content ?: "",
+                code = question.code ?: "",
+                purpose = question.purpose ?: "",
+                likeCount = question.likeCount,
+                createdAt = question.createdAt,
+                categories = categories,
+                viewCount = question.viewCount,
+                comments = question.comments.map { commentConverter.toResponse(it) }
+        )
+
+        return response
     }
 
     fun toSimpleResponse(question: Question): SimpleQuestionResponse {
