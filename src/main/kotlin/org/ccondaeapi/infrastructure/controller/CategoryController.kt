@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class CategoryController(
         private val categoryService: CategoryService
 ){
-    @GetMapping("/findAll")
+    @GetMapping("/find-all")
     fun findAll(): List<Category> {
         val result: List<Category> = categoryService.findAll()
         return result
