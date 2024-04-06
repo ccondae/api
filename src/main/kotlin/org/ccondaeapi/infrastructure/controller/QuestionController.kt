@@ -35,7 +35,7 @@ class QuestionController(
         return questionService.like(id)
     }
 
-    @PostMapping("/not-answered")
+    @PostMapping("/page/not-answered")
     fun notAnsweredQuestionByCategories(
             @RequestBody
             categories: CategoryRequest,
@@ -52,7 +52,7 @@ class QuestionController(
             val categories: List<Long>
     )
 
-    @PostMapping("/popular")
+    @PostMapping("/page/popular")
     fun getPopularQuestions(
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
