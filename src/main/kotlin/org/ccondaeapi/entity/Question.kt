@@ -17,7 +17,6 @@ class Question(
         @field: OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
         var categories: List<QuestionCategory> = listOf(),
 
-        @field: JoinColumn(name = "id")
-        @field: OneToMany
-        var comments: List<Comment> = listOf()
+        @field: OneToMany(mappedBy ="question")
+        var comments: List<Comment> = mutableListOf<Comment>()
 )
