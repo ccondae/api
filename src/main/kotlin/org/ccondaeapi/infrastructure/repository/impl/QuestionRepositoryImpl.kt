@@ -2,7 +2,7 @@ package org.ccondaeapi.infrastructure.repository.impl
 
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.ccondaeapi.domain.converter.QuestionConverter
-import org.ccondaeapi.domain.dto.QuestionDetail
+import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.entity.QComment
 import org.ccondaeapi.entity.QComment.comment
 import org.ccondaeapi.entity.QQuestion
@@ -19,7 +19,7 @@ class QuestionRepositoryImpl(
         private val questionConverter: QuestionConverter
 ) : QuestionRepositoryCustom {
 
-    override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<QuestionDetail> {
+    override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
@@ -32,7 +32,7 @@ class QuestionRepositoryImpl(
                 .limit(pageable.pageSize.toLong())
 
         val questions: List<Question> = questionsQuery.fetch()
-        val dtoList: List<QuestionDetail> = questions.map { questionConverter.toDetailReponse(it) }
+        val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
 
         val countQuery = queryFactory.select(qQuestion.count())
                 .from(qQuestion)

@@ -2,9 +2,8 @@ package org.ccondaeapi.application
 
 import jakarta.transaction.Transactional
 import org.ccondaeapi.domain.converter.QuestionConverter
-import org.ccondaeapi.domain.dto.QuestionDetail
-import org.ccondaeapi.domain.dto.QuestionSaveDto
-import org.ccondaeapi.infrastructure.repository.CategoryRepository
+import org.ccondaeapi.domain.dto.SimpleQuestionResponse
+import org.ccondaeapi.domain.dto.QuestionUpload
 import org.ccondaeapi.infrastructure.repository.QuestionCategoryRepository
 import org.ccondaeapi.infrastructure.repository.QuestionRepository
 import org.springframework.data.domain.Page
@@ -19,7 +18,7 @@ class QuestionService(
         private val categoryService: CategoryService
 ) {
     @Transactional
-    fun save(question: QuestionSaveDto): QuestionDetail {
+    fun save(question: QuestionUpload): SimpleQuestionResponse {
         // Entity 저장
         val entity = questionConverter.toEntity(question)
         val saved = questionRepository.save(entity)
@@ -30,17 +29,17 @@ class QuestionService(
         // Category들 Count 1 증가
         categoryService.increaseCount(question.categoryIds)
 
-        val response = questionConverter.toDetailReponse(saved)
+        val response = questionConverter.toSimpleResponse(saved)
         return response
     }
 
-    fun findById(id: Long): QuestionDetail {
+    fun findById(id: Long): SimpleQuestionResponse {
         val entity = questionRepository.findById(id).orElseThrow { IllegalArgumentException("해당 질문이 존재하지 않습니다.") }
-        val response = questionConverter.toDetailReponse(entity)
+        val response = questionConverter.toSimpleResponse(entity)
         return response
     }
 
-    fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<QuestionDetail> {
+    fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         var newCategories: List<Long>
         categories.let { category ->
             newCategories = if(category.isEmpty()) {

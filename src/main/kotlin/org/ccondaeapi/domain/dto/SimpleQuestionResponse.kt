@@ -1,12 +1,13 @@
 package org.ccondaeapi.domain.dto
 
-import org.ccondaeapi.entity.Category
 import java.time.LocalDateTime
 
-data class QuestionDetail(
+data class SimpleQuestionResponse(
         val id: Long,
         val title: String,
-        val text: String,
+        val content: String,
         val createdAt: LocalDateTime?,
+        val likeCount: Long = 0,
+        val viewCount: Long = 0,
         val categories: List<CategoryResponse>
 )

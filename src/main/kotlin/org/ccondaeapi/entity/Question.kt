@@ -9,7 +9,11 @@ class Question(
         @field: GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
         var title: String? = null,
-        var text: String? = null,
+        var content: String? = null,
+        var purpose: String? = null,
+        var code: String? = null,
+        @field: Column(name = "github_url")
+        var githubUrl: String? = null,
         var createdAt: LocalDateTime? = null,
         var likeCount: Long = 0,
         var viewCount: Long = 0,

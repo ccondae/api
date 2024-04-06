@@ -9,7 +9,7 @@ class Comment(
         @field: GeneratedValue(strategy = GenerationType.IDENTITY)
         var id: Long? = null,
 
-        var text: String? = null,
+        var content: String? = null,
         var likeCount: Long = 0,
 
         @field: JoinColumn(name = "question_id")

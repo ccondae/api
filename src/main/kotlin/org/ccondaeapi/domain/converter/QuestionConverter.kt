@@ -1,8 +1,8 @@
 package org.ccondaeapi.domain.converter
 
 import org.ccondaeapi.domain.dto.CategoryResponse
-import org.ccondaeapi.domain.dto.QuestionDetail
-import org.ccondaeapi.domain.dto.QuestionSaveDto
+import org.ccondaeapi.domain.dto.SimpleQuestionResponse
+import org.ccondaeapi.domain.dto.QuestionUpload
 import org.ccondaeapi.entity.Question
 import org.ccondaeapi.entity.QuestionCategory
 import org.ccondaeapi.infrastructure.repository.CategoryRepository
@@ -14,7 +14,7 @@ class QuestionConverter(
         private val categoryRepository: CategoryRepository,
         private val categoryConverter: CategoryConverter
 ) {
-    fun toEntity(dto: QuestionSaveDto): Question {
+    fun toEntity(dto: QuestionUpload): Question {
         var categories = mutableListOf<QuestionCategory>()
         dto.categoryIds.forEach {
             var category = categoryRepository.findById(it).orElseThrow { IllegalArgumentException("해당 카테고리가 존재하지 않습니다.") }
@@ -23,7 +23,10 @@ class QuestionConverter(
         }
         var question: Question = Question(
                 title = dto.title,
-                text = dto.text,
+                githubUrl = dto.githubUrl,
+                content = dto.content,
+                code = dto.code,
+                purpose = dto.purpose,
                 categories = categories.toList(),
                 createdAt = LocalDateTime.now()
         )
@@ -33,17 +36,19 @@ class QuestionConverter(
         return question
     }
 
-    fun toDetailReponse(question: Question): QuestionDetail {
+    fun toSimpleResponse(question: Question): SimpleQuestionResponse {
         var categories = mutableListOf<CategoryResponse>()
         question.categories.forEach {
             it.category?.let { entity -> categories.add(categoryConverter.toResponse(entity)) }
         }
 
-        var response: QuestionDetail = QuestionDetail(
+        var response: SimpleQuestionResponse = SimpleQuestionResponse(
                 id = question.id ?: 0,
                 title = question.title ?: "",
-                text = question.text ?: "",
+                content = question.content ?: "",
                 createdAt = question.createdAt,
+                likeCount = question.likeCount,
+                viewCount = question.viewCount,
                 categories = categories,
         )
 
