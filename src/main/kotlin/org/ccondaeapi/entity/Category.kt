@@ -6,7 +6,7 @@ import jakarta.persistence.*
 class Category (
     @field:Id
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)
-    var id: Int? = null,
+    var id: Long? = null,
     var name: String? = null,
     var count: Int? = null,
 

@@ -3,7 +3,7 @@ create database ccondae;
 use ccondae;
 
 create table category (
-    id int primary key,
+    id BIGINT primary key,
     count int default 0,
     name varchar(255)
 );
