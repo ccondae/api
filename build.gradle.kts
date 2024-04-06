@@ -6,6 +6,9 @@ plugins {
     kotlin("jvm") version "1.9.23"
     kotlin("plugin.spring") version "1.9.23"
     kotlin("plugin.jpa") version "1.9.23"
+
+    // 추가: Kotlin annotation processing 플러그인
+    kotlin("kapt") version "1.9.21"
 }
 
 group = "org"
@@ -20,6 +23,12 @@ repositories {
 }
 
 dependencies {
+    // QueryDSL 의존성 추가
+    implementation("com.querydsl:querydsl-jpa:5.0.0:jakarta")
+    kapt("com.querydsl:querydsl-apt:5.0.0:jakarta")
+    kapt("jakarta.annotation:jakarta.annotation-api")
+    kapt("jakarta.persistence:jakarta.persistence-api")
+
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -40,3 +49,32 @@ tasks.withType<KotlinCompile> {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+// Querydsl 설정부 추가 - start
+val generated = file("src/main/generated")
+
+// querydsl QClass 파일 생성 위치를 지정
+tasks.withType<JavaCompile> {
+    options.generatedSourceOutputDirectory.set(generated)
+}
+
+// kotlin source set 에 querydsl QClass 위치 추가
+sourceSets {
+    main {
+        kotlin.srcDirs += generated
+    }
+}
+
+// gradle clean 시에 QClass 디렉토리 삭제
+tasks.named("clean") {
+    doLast {
+        generated.deleteRecursively()
+    }
+}
+
+
+kapt {
+    generateStubs = true
+}
+
+// Querydsl 설정부 추가 - end
