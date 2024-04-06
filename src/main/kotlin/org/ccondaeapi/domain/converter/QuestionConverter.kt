@@ -1,5 +1,7 @@
 package org.ccondaeapi.domain.converter
 
+import org.ccondaeapi.domain.dto.CategoryResponse
+import org.ccondaeapi.domain.dto.QuestionDetail
 import org.ccondaeapi.domain.dto.QuestionSaveDto
 import org.ccondaeapi.entity.Category
 import org.ccondaeapi.entity.Question
@@ -10,7 +12,8 @@ import java.time.LocalDateTime
 
 @Component
 class QuestionConverter(
-        private val categoryRepository: CategoryRepository
+        private val categoryRepository: CategoryRepository,
+        private val categoryConverter: CategoryConverter
 ) {
     fun convertToEntity(dto: QuestionSaveDto): Question {
         var categories = mutableListOf<QuestionCategory>()
@@ -24,7 +27,27 @@ class QuestionConverter(
                 text = dto.text,
                 categories = categories.toList(),
                 createdAt = LocalDateTime.now()
-                )
+        )
+        categories.forEach {
+            it.question = question
+        }
         return question
+    }
+
+    fun toDetailReponse(question: Question): QuestionDetail {
+        var categories = mutableListOf<CategoryResponse>()
+        question.categories.forEach {
+            it.category?.let { entity -> categories.add(categoryConverter.toResponse(entity)) }
+        }
+
+        var response: QuestionDetail = QuestionDetail(
+                id = question.id ?: 0,
+                title = question.title ?: "",
+                text = question.text ?: "",
+                createdAt = question.createdAt,
+                categories = categories,
+        )
+
+        return response
     }
 }
