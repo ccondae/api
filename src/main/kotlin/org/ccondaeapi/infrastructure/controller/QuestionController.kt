@@ -36,13 +36,17 @@ class QuestionController(
     @PostMapping("/not-answered")
     fun notAnsweredQuestionByCategories(
             @RequestBody
-            categories: List<Long>,
+            categories: CategoryRequest,
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
             @RequestParam(required = false, defaultValue = "0")
             page: Int
     ): Page<QuestionDetail> {
         val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.notAnsweredQuestionByCategories(categories, pageable)
+        return questionService.notAnsweredQuestionByCategories(categories.categories, pageable)
     }
+
+    data class CategoryRequest(
+            val categories: List<Long>
+    )
 }
