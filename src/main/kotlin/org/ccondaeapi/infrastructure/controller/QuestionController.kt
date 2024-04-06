@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*
 class QuestionController(
         private val questionService: QuestionService
 ) {
-    @PostMapping("/save")
-    fun save(
+    @PostMapping("/upload")
+    fun upload(
             @RequestBody
             request: QuestionUpload
     ): SimpleQuestionResponse {
