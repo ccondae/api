@@ -5,6 +5,7 @@ import org.ccondaeapi.domain.converter.QuestionConverter
 import org.ccondaeapi.domain.dto.QuestionDetailResponse
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.domain.dto.QuestionUpload
+import org.ccondaeapi.entity.Question
 import org.ccondaeapi.infrastructure.repository.QuestionCategoryRepository
 import org.ccondaeapi.infrastructure.repository.QuestionRepository
 import org.springframework.data.domain.Page
@@ -35,9 +36,15 @@ class QuestionService(
     }
 
     fun getDetail(id: Long): QuestionDetailResponse {
-        val entity = questionRepository.findById(id).orElseThrow { IllegalArgumentException("해당 질문이 존재하지 않습니다.") }
+        var entity = questionRepository.findById(id).orElseThrow { IllegalArgumentException("해당 질문이 존재하지 않습니다.") }
+        entity = increaseViewCount(entity)
         val response = questionConverter.toDetailResponse(entity)
         return response
+    }
+
+    private fun increaseViewCount(entity: Question): Question{
+        entity.viewCount++
+        return questionRepository.save(entity)
     }
 
     fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
