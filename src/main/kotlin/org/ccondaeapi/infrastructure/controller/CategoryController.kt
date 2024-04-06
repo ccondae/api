@@ -1,19 +1,24 @@
 package org.ccondaeapi.infrastructure.controller
 
 import org.ccondaeapi.application.CategoryService
+import org.ccondaeapi.domain.dto.CategoryResponse
 import org.ccondaeapi.entity.Category
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/category")
 class CategoryController(
         private val categoryService: CategoryService
-){
+) {
     @GetMapping("/find-all")
-    fun findAll(): List<Category> {
-        val result: List<Category> = categoryService.findAll()
+    fun findAll(): List<CategoryResponse> {
+        val result: List<CategoryResponse> = categoryService.findAll()
+        return result
+    }
+
+    @GetMapping("/search/{name}")
+    fun search(@PathVariable name: String): List<CategoryResponse> {
+        val result: List<CategoryResponse> = categoryService.search(name)
         return result
     }
 }
