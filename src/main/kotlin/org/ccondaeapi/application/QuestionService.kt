@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class QuestionService(
-        private val questionCustomRepository: QuestionRepositoryCustom,
         private val questionRepository: QuestionRepository,
         private val questionConverter: QuestionConverter,
         private val questionCategoryRepository: QuestionCategoryRepository,
@@ -44,7 +43,7 @@ class QuestionService(
                 category.map { it.toLong() }
             }
         }
-        val result = questionCustomRepository.notAnsweredQuestionByCategories(newCategories, pageable)
+        val result = questionRepository.notAnsweredQuestionByCategories(newCategories, pageable)
         return result
     }
 }
