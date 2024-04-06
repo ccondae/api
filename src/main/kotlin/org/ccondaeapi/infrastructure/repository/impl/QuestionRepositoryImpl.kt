@@ -28,6 +28,7 @@ class QuestionRepositoryImpl(
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
                 .where(qQuestionCategory.category.id.`in`(categories).and(qComment.id.isNull))
+                .orderBy(qQuestion.createdAt.desc())
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
 
@@ -44,6 +45,33 @@ class QuestionRepositoryImpl(
 
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
+
+    override fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        val qQuestion = QQuestion.question
+        val qComment = QComment.comment
+        val qQuestionCategory = QQuestionCategory.questionCategory
+
+        val questionsQuery = queryFactory.selectFrom(qQuestion)
+                .join(qQuestion.comments, qComment)
+                .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
+                .offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
+
+        val questions: List<Question> = questionsQuery.fetch()
+        val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
+
+        val countQuery = queryFactory.select(qQuestion.count())
+                .from(qQuestion)
+                .join(qQuestion.comments, qComment)
+                .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
+
+        val count: Long = countQuery.fetchOne() ?: 0L
+
+        return PageableExecutionUtils.getPage(dtoList, pageable) { count }
+    }
+
 
     override fun getPopularQuestion(pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question

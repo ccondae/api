@@ -35,13 +35,13 @@ class QuestionService(
         return response
     }
 
-    fun like(id: Long) : QuestionDetailResponse {
-        val searched : Question  = questionRepository.findById(id).orElseThrow{
+    fun like(id: Long): QuestionDetailResponse {
+        val searched: Question = questionRepository.findById(id).orElseThrow {
             IllegalArgumentException("찾고자 하는 질문이 없습니다.")
         }
-        searched.likeCount ++
-        val saved : Question = questionRepository.save(searched)
-        val response : QuestionDetailResponse = questionConverter.toDetailResponse(saved)
+        searched.likeCount++
+        val saved: Question = questionRepository.save(searched)
+        val response: QuestionDetailResponse = questionConverter.toDetailResponse(saved)
         return response
     }
 
@@ -56,7 +56,7 @@ class QuestionService(
         return questionRepository.getPopularQuestion(pageable)
     }
 
-    private fun increaseViewCount(entity: Question): Question{
+    private fun increaseViewCount(entity: Question): Question {
         entity.viewCount++
         return questionRepository.save(entity)
     }
@@ -64,14 +64,28 @@ class QuestionService(
     fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         var newCategories: List<Long>
         categories.let { category ->
-            newCategories = if(category.isEmpty()) {
-                val categories: List<Long> =  categoryService.findAll().map { it.id!! }
+            newCategories = if (category.isEmpty()) {
+                val categories: List<Long> = categoryService.findAll().map { it.id!! }
                 categories
             } else {
                 category.map { it.toLong() }
             }
         }
         val result = questionRepository.notAnsweredQuestionByCategories(newCategories, pageable)
+        return result
+    }
+
+    fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        var newCategories: List<Long>
+        categories.let { category ->
+            newCategories = if (category.isEmpty()) {
+                val categories: List<Long> = categoryService.findAll().map { it.id!! }
+                categories
+            } else {
+                category.map { it.toLong() }
+            }
+        }
+        val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
         return result
     }
 }

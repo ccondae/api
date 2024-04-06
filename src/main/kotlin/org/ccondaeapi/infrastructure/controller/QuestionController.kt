@@ -31,7 +31,7 @@ class QuestionController(
     }
 
     @PatchMapping("/like/{id}")
-    fun like(@PathVariable id:Long) : QuestionDetailResponse {
+    fun like(@PathVariable id: Long): QuestionDetailResponse {
         return questionService.like(id)
     }
 
@@ -47,6 +47,20 @@ class QuestionController(
         val pageable: Pageable = PageRequest.of(page, size)
         return questionService.notAnsweredQuestionByCategories(categories.categories, pageable)
     }
+
+    @PostMapping("/page/answered")
+    fun answeredQuestionByCategories(
+            @RequestBody
+            categories: CategoryRequest,
+            @RequestParam(required = false, defaultValue = "10")
+            size: Int,
+            @RequestParam(required = false, defaultValue = "0")
+            page: Int
+    ): Page<SimpleQuestionResponse> {
+        val pageable: Pageable = PageRequest.of(page, size)
+        return questionService.answeredQuestionByCategories(categories.categories, pageable)
+    }
+
 
     data class CategoryRequest(
             val categories: List<Long>
