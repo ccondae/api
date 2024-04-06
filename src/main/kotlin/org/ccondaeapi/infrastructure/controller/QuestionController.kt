@@ -30,6 +30,15 @@ class QuestionController(
         return questionService.getDetail(id)
     }
 
+    @GetMapping("/search/{keyword}")
+    fun findById(
+            @PathVariable
+            keyword: String
+    ): List<SimpleQuestionResponse> {
+        return questionService.search(keyword)
+    }
+
+
     @PatchMapping("/like/{id}")
     fun like(@PathVariable id: Long): QuestionDetailResponse {
         return questionService.like(id)

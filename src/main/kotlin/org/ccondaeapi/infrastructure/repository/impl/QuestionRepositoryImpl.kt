@@ -1,5 +1,6 @@
 package org.ccondaeapi.infrastructure.repository.impl
 
+import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
 import org.ccondaeapi.domain.converter.QuestionConverter
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
@@ -97,5 +98,16 @@ class QuestionRepositoryImpl(
                 .leftJoin(question.comments, comment)
                 .where(question.comments.isEmpty)
                 .fetch()
+    }
+
+
+    override fun search(keyword: String) : List<Question> {
+        val result: List<Question> = queryFactory.selectFrom(question)
+                .where(question.title.containsIgnoreCase(keyword)
+                        .or(question.content.containsIgnoreCase(keyword))
+                        .or(question.code.containsIgnoreCase(keyword))
+                        .or(question.purpose.containsIgnoreCase(keyword))
+                ).fetch()
+        return result
     }
 }

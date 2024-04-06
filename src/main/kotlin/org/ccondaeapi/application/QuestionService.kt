@@ -13,13 +13,13 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 
 @Service
+@Transactional
 class QuestionService(
         private val questionRepository: QuestionRepository,
         private val questionConverter: QuestionConverter,
         private val questionCategoryRepository: QuestionCategoryRepository,
         private val categoryService: CategoryService
 ) {
-    @Transactional
     fun upload(question: QuestionUpload): SimpleQuestionResponse {
         // Entity 저장
         val entity = questionConverter.toEntity(question)
@@ -86,6 +86,12 @@ class QuestionService(
             }
         }
         val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
+        return result
+    }
+
+    fun search(keyword: String): List<SimpleQuestionResponse> {
+        val searchResult = questionRepository.search(keyword)
+        val result = searchResult.map { questionConverter.toSimpleResponse(it) }
         return result
     }
 }

@@ -62,12 +62,12 @@ class QuestionConverter(
     }
 
     fun toSimpleResponse(question: Question): SimpleQuestionResponse {
-        var categories = mutableListOf<CategoryResponse>()
+        val categories = mutableListOf<CategoryResponse>()
         question.categories.forEach {
             it.category?.let { entity -> categories.add(categoryConverter.toResponse(entity)) }
         }
 
-        var response: SimpleQuestionResponse = SimpleQuestionResponse(
+        val response: SimpleQuestionResponse = SimpleQuestionResponse(
                 id = question.id ?: 0,
                 title = question.title ?: "",
                 content = question.content ?: "",
