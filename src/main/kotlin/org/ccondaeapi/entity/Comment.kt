@@ -12,7 +12,7 @@ class Comment(
         var text: String? = null,
         var likeCount: Long = 0,
 
-        @field: JoinColumn(name = "questionId")
+        @field: JoinColumn(name = "question_id")
         @field: ManyToOne
         var question: Question = Question(),
 
