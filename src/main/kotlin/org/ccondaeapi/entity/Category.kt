@@ -8,7 +8,7 @@ class Category (
     @field:GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long? = null,
     var name: String? = null,
-    var count: Int? = null,
+    var count: Int = 0,
 
     @field:OneToMany(mappedBy = "category")
     var questions: List<QuestionCategory> = listOf()

@@ -1,13 +1,12 @@
 package org.ccondaeapi.application
 
+import jakarta.transaction.Transactional
 import org.ccondaeapi.domain.converter.QuestionConverter
 import org.ccondaeapi.domain.dto.QuestionDetail
 import org.ccondaeapi.domain.dto.QuestionSaveDto
-import org.ccondaeapi.entity.Category
 import org.ccondaeapi.infrastructure.repository.CategoryRepository
 import org.ccondaeapi.infrastructure.repository.QuestionCategoryRepository
 import org.ccondaeapi.infrastructure.repository.QuestionRepository
-import org.ccondaeapi.infrastructure.repository.ifs.QuestionRepositoryCustom
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -17,12 +16,20 @@ class QuestionService(
         private val questionRepository: QuestionRepository,
         private val questionConverter: QuestionConverter,
         private val questionCategoryRepository: QuestionCategoryRepository,
-        private val categoryRepository: CategoryRepository
+        private val categoryService: CategoryService
 ) {
+    @Transactional
     fun save(question: QuestionSaveDto): QuestionDetail {
-        val entity = questionConverter.convertToEntity(question)
+        // Entity 저장
+        val entity = questionConverter.toEntity(question)
         val saved = questionRepository.save(entity)
+
+        // QuestionCategory 연관 설정
         questionCategoryRepository.saveAll(saved.categories)
+
+        // Category들 Count 1 증가
+        categoryService.increaseCount(question.categoryIds)
+
         val response = questionConverter.toDetailReponse(saved)
         return response
     }
@@ -37,7 +44,7 @@ class QuestionService(
         var newCategories: List<Long>
         categories.let { category ->
             newCategories = if(category.isEmpty()) {
-                val categories: List<Long> =  categoryRepository.findAll().map { it.id!! }
+                val categories: List<Long> =  categoryService.findAll().map { it.id!! }
                 categories
             } else {
                 category.map { it.toLong() }

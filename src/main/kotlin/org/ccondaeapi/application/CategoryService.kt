@@ -1,5 +1,6 @@
 package org.ccondaeapi.application
 
+import jakarta.transaction.Transactional
 import org.ccondaeapi.domain.converter.CategoryConverter
 import org.ccondaeapi.domain.dto.CategoryResponse
 import org.ccondaeapi.infrastructure.repository.CategoryRepository
@@ -20,4 +21,10 @@ class CategoryService(
         return responses
     }
 
+    @Transactional
+    fun increaseCount(categoryIds: List<Long>) {
+        var categories = categoryRepository.findAllById(categoryIds)
+        categories.forEach { it.count++  }
+        categoryRepository.saveAll(categories)
+    }
 }

@@ -3,7 +3,6 @@ package org.ccondaeapi.domain.converter
 import org.ccondaeapi.domain.dto.CategoryResponse
 import org.ccondaeapi.domain.dto.QuestionDetail
 import org.ccondaeapi.domain.dto.QuestionSaveDto
-import org.ccondaeapi.entity.Category
 import org.ccondaeapi.entity.Question
 import org.ccondaeapi.entity.QuestionCategory
 import org.ccondaeapi.infrastructure.repository.CategoryRepository
@@ -15,7 +14,7 @@ class QuestionConverter(
         private val categoryRepository: CategoryRepository,
         private val categoryConverter: CategoryConverter
 ) {
-    fun convertToEntity(dto: QuestionSaveDto): Question {
+    fun toEntity(dto: QuestionSaveDto): Question {
         var categories = mutableListOf<QuestionCategory>()
         dto.categoryIds.forEach {
             var category = categoryRepository.findById(it).orElseThrow { IllegalArgumentException("해당 카테고리가 존재하지 않습니다.") }
