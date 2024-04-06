@@ -15,7 +15,7 @@ class CommentController(
         return commentService.upload(request)
     }
 
-    @GetMapping("/{type}/{id}")
+    @PatchMapping("/{type}/{id}")
     fun editLike(
             @PathVariable type: CommentService.PointType,
             @PathVariable id: Long
