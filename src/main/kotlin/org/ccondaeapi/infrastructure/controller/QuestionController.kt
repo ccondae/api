@@ -43,37 +43,4 @@ class QuestionController(
     fun like(@PathVariable id: Long): QuestionDetailResponse {
         return questionService.like(id)
     }
-
-    @GetMapping("/page/not-answered")
-    fun notAnsweredQuestionByCategories(
-            @RequestParam(required = false, defaultValue = "10")
-            size: Int,
-            @RequestParam(required = false, defaultValue = "0")
-            page: Int
-    ): Page<SimpleQuestionResponse> {
-        val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.notAnsweredQuestionByCategories( pageable)
-    }
-
-    @GetMapping("/page/answered")
-    fun answeredQuestionByCategories(
-            @RequestParam(required = false, defaultValue = "10")
-            size: Int,
-            @RequestParam(required = false, defaultValue = "0")
-            page: Int
-    ): Page<SimpleQuestionResponse> {
-        val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.answeredQuestionByCategories( pageable)
-    }
-
-    @GetMapping("/page/popular")
-    fun getPopularQuestions(
-            @RequestParam(required = false, defaultValue = "10")
-            size: Int,
-            @RequestParam(required = false, defaultValue = "0")
-            page: Int,
-    ): Page<SimpleQuestionResponse> {
-        val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.getPopularContents(pageable)
-    }
 }

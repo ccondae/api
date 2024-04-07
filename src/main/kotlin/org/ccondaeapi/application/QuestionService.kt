@@ -14,12 +14,7 @@ import org.springframework.stereotype.Service
 
 @Service
 @Transactional
-class QuestionService(
-        private val questionRepository: QuestionRepository,
-        private val questionConverter: QuestionConverter,
-        private val questionCategoryRepository: QuestionCategoryRepository,
-        private val categoryService: CategoryService
-) {
+class QuestionService(private val questionRepository: QuestionRepository, private val questionConverter: QuestionConverter, private val questionCategoryRepository: QuestionCategoryRepository, private val categoryService: CategoryService) {
     fun upload(question: QuestionUpload): SimpleQuestionResponse {
         // Entity 저장
         val entity = questionConverter.toEntity(question)
@@ -52,22 +47,52 @@ class QuestionService(
         return response
     }
 
-    fun getPopularContents(pageable: Pageable): Page<SimpleQuestionResponse> {
-        return questionRepository.getPopularQuestion(pageable)
-    }
 
     private fun increaseViewCount(entity: Question): Question {
         entity.viewCount++
         return questionRepository.save(entity)
     }
 
-    fun notAnsweredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
-        val result = questionRepository.notAnsweredQuestionByCategories(pageable)
+    fun getPopularContents(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        var newCategories: List<Long>
+        categories.let { category ->
+            newCategories = if (category.isEmpty()) {
+                val categories: List<Long> = categoryService.findAll().map { it.id!! }
+                categories
+            } else {
+                category.map { it.toLong() }
+            }
+        }
+
+        return questionRepository.getPopularQuestion(newCategories, pageable)
+    }
+
+    fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        var newCategories: List<Long>
+        categories.let { category ->
+            newCategories = if (category.isEmpty()) {
+                val categories: List<Long> = categoryService.findAll().map { it.id!! }
+                categories
+            } else {
+                category.map { it.toLong() }
+            }
+        }
+        val result = questionRepository.notAnsweredQuestionByCategories(newCategories, pageable)
         return result
     }
 
-    fun answeredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
-        val result = questionRepository.answeredQuestionByCategories(pageable)
+    fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        var newCategories: List<Long>
+        categories.let { category ->
+            newCategories = if (category.isEmpty()) {
+                val categories: List<Long> = categoryService.findAll().map { it.id!! }
+                categories
+            } else {
+                category.map { it.toLong() }
+            }
+        }
+
+        val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
         return result
     }
 

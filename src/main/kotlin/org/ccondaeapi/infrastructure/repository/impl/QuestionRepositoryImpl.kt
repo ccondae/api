@@ -20,7 +20,7 @@ class QuestionRepositoryImpl(
         private val questionConverter: QuestionConverter
 ) : QuestionRepositoryCustom {
 
-    override fun notAnsweredQuestionByCategories( pageable: Pageable): Page<SimpleQuestionResponse> {
+    override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
@@ -28,6 +28,7 @@ class QuestionRepositoryImpl(
         val questionsQuery = queryFactory.selectFrom(qQuestion)
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
                 .orderBy(qQuestion.createdAt.desc())
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
@@ -37,6 +38,7 @@ class QuestionRepositoryImpl(
 
         val countQuery = queryFactory.select(qQuestion.count())
                 .from(qQuestion)
+                .where(qQuestionCategory.category.id.`in`(categories))
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
 
@@ -45,7 +47,7 @@ class QuestionRepositoryImpl(
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
 
-    override fun answeredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
+    override fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
@@ -53,6 +55,7 @@ class QuestionRepositoryImpl(
         val questionsQuery = queryFactory.selectFrom(qQuestion)
                 .join(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
 
@@ -61,6 +64,7 @@ class QuestionRepositoryImpl(
 
         val countQuery = queryFactory.select(qQuestion.count())
                 .from(qQuestion)
+                .where(qQuestionCategory.category.id.`in`(categories))
                 .join(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
 
@@ -70,13 +74,14 @@ class QuestionRepositoryImpl(
     }
 
 
-    override fun getPopularQuestion(pageable: Pageable): Page<SimpleQuestionResponse> {
+    override fun getPopularQuestion(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
         val questionsQuery = queryFactory.selectFrom(qQuestion)
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
                 .orderBy(qQuestion.likeCount.desc())
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
@@ -84,7 +89,11 @@ class QuestionRepositoryImpl(
         val questions: List<Question> = questionsQuery.fetch()
         val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
 
-        val count: Long = queryFactory.select(qQuestion.count()).from(qQuestion).fetchOne() ?: 0L
+        val count: Long = queryFactory
+                .select(qQuestion.count())
+                .from(qQuestion)
+                .where(qQuestionCategory.category.id.`in`(categories))
+                .fetchOne() ?: 0L
 
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
@@ -92,12 +101,11 @@ class QuestionRepositoryImpl(
     fun notAnsweredQuestion(): List<Question> {
         return queryFactory.selectFrom(question)
                 .leftJoin(question.comments, comment)
-                .where(question.comments.isEmpty)
                 .fetch()
     }
 
 
-    override fun search(keyword: String) : List<Question> {
+    override fun search(keyword: String): List<Question> {
         val result: List<Question> = queryFactory.selectFrom(question)
                 .where(question.title.containsIgnoreCase(keyword)
                         .or(question.content.containsIgnoreCase(keyword))
