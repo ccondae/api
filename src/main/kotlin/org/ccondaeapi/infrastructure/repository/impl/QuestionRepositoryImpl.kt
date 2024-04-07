@@ -2,6 +2,7 @@ package org.ccondaeapi.infrastructure.repository.impl
 
 import com.querydsl.jpa.impl.JPAQuery
 import com.querydsl.jpa.impl.JPAQueryFactory
+import jakarta.transaction.Transactional
 import org.ccondaeapi.domain.converter.QuestionConverter
 import org.ccondaeapi.domain.dto.SimpleQuestionResponse
 import org.ccondaeapi.entity.QComment
@@ -48,7 +49,6 @@ class QuestionRepositoryImpl(
 
     }
 
-
     override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
@@ -59,7 +59,7 @@ class QuestionRepositoryImpl(
                 .fetchJoin()
                 .join(qQuestion.categories, qQuestionCategory)
                 .fetchJoin()
-                .where(qQuestionCategory.category.id.`in`(categories))
+                .where(qQuestionCategory.category.id.`in`(categories).and(qComment.id.isNull))
                 .orderBy(qQuestion.createdAt.desc())
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
@@ -69,8 +69,9 @@ class QuestionRepositoryImpl(
 
         val countQuery = queryFactory.select(qQuestion.count())
                 .from(qQuestion)
+                .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
-                .where(qQuestionCategory.category.id.`in`(categories))
+                .where(qQuestionCategory.category.id.`in`(categories).and(qComment.id.isNull))
 
         val count: Long = countQuery.fetchOne() ?: 0L
 
