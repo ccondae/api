@@ -20,7 +20,7 @@ class QuestionRepositoryImpl(
         private val questionConverter: QuestionConverter
 ) : QuestionRepositoryCustom {
 
-    override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+    override fun notAnsweredQuestionByCategories( pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
@@ -28,7 +28,6 @@ class QuestionRepositoryImpl(
         val questionsQuery = queryFactory.selectFrom(qQuestion)
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
-                .where(qQuestionCategory.category.id.`in`(categories).and(qComment.id.isNull))
                 .orderBy(qQuestion.createdAt.desc())
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
@@ -40,14 +39,13 @@ class QuestionRepositoryImpl(
                 .from(qQuestion)
                 .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
-                .where(qQuestionCategory.category.id.`in`(categories).and(qComment.id.isNull))
 
         val count: Long = countQuery.fetchOne() ?: 0L
 
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
 
-    override fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+    override fun answeredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
         val qComment = QComment.comment
         val qQuestionCategory = QQuestionCategory.questionCategory
@@ -55,7 +53,6 @@ class QuestionRepositoryImpl(
         val questionsQuery = queryFactory.selectFrom(qQuestion)
                 .join(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
-                .where(qQuestionCategory.category.id.`in`(categories))
                 .offset(pageable.offset)
                 .limit(pageable.pageSize.toLong())
 
@@ -66,7 +63,6 @@ class QuestionRepositoryImpl(
                 .from(qQuestion)
                 .join(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
-                .where(qQuestionCategory.category.id.`in`(categories))
 
         val count: Long = countQuery.fetchOne() ?: 0L
 

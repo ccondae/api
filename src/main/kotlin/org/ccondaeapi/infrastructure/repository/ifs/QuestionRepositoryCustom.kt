@@ -8,8 +8,8 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface QuestionRepositoryCustom {
-    fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse>
+    fun notAnsweredQuestionByCategories( pageable: Pageable): Page<SimpleQuestionResponse>
     fun getPopularQuestion(pageable: Pageable): Page<SimpleQuestionResponse>
-    fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse>
+    fun answeredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse>
     fun search(keyword: String): List<Question>
 }

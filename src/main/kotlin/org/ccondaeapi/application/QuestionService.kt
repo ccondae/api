@@ -61,31 +61,13 @@ class QuestionService(
         return questionRepository.save(entity)
     }
 
-    fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
-        var newCategories: List<Long>
-        categories.let { category ->
-            newCategories = if (category.isEmpty()) {
-                val categories: List<Long> = categoryService.findAll().map { it.id!! }
-                categories
-            } else {
-                category.map { it.toLong() }
-            }
-        }
-        val result = questionRepository.notAnsweredQuestionByCategories(newCategories, pageable)
+    fun notAnsweredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
+        val result = questionRepository.notAnsweredQuestionByCategories(pageable)
         return result
     }
 
-    fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
-        var newCategories: List<Long>
-        categories.let { category ->
-            newCategories = if (category.isEmpty()) {
-                val categories: List<Long> = categoryService.findAll().map { it.id!! }
-                categories
-            } else {
-                category.map { it.toLong() }
-            }
-        }
-        val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
+    fun answeredQuestionByCategories(pageable: Pageable): Page<SimpleQuestionResponse> {
+        val result = questionRepository.answeredQuestionByCategories(pageable)
         return result
     }
 

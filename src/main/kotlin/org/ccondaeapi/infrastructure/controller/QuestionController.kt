@@ -44,36 +44,27 @@ class QuestionController(
         return questionService.like(id)
     }
 
-    @PostMapping("/page/not-answered")
+    @GetMapping("/page/not-answered")
     fun notAnsweredQuestionByCategories(
-            @RequestBody
-            categories: CategoryRequest,
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
             @RequestParam(required = false, defaultValue = "0")
             page: Int
     ): Page<SimpleQuestionResponse> {
         val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.notAnsweredQuestionByCategories(categories.categories, pageable)
+        return questionService.notAnsweredQuestionByCategories( pageable)
     }
 
-    @PostMapping("/page/answered")
+    @GetMapping("/page/answered")
     fun answeredQuestionByCategories(
-            @RequestBody
-            categories: CategoryRequest,
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
             @RequestParam(required = false, defaultValue = "0")
             page: Int
     ): Page<SimpleQuestionResponse> {
         val pageable: Pageable = PageRequest.of(page, size)
-        return questionService.answeredQuestionByCategories(categories.categories, pageable)
+        return questionService.answeredQuestionByCategories( pageable)
     }
-
-
-    data class CategoryRequest(
-            val categories: List<Long>
-    )
 
     @PostMapping("/page/popular")
     fun getPopularQuestions(
