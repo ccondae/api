@@ -53,6 +53,13 @@ class QuestionService(private val questionRepository: QuestionRepository, privat
         return questionRepository.save(entity)
     }
 
+    fun getAllContent(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        val newCategories: List<Long> = prepareCategoryList(categories)
+        val result = questionRepository.allQuestionByCategories(newCategories, pageable)
+        return result
+    }
+
+
     fun getPopularContents(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val newCategories: List<Long> = prepareCategoryList(categories)
         val result = questionRepository.getPopularQuestion(newCategories, pageable)

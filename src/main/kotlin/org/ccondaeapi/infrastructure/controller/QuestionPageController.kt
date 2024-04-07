@@ -15,6 +15,19 @@ import org.springframework.web.bind.annotation.RestController
 class QuestionPageController(
         val questionService: QuestionService
 ) {
+    @GetMapping("/all")
+    fun all(
+            @RequestParam(required = false, defaultValue = "")
+            categories: List<Long>,
+            @RequestParam(required = false, defaultValue = "10")
+            size: Int,
+            @RequestParam(required = false, defaultValue = "0")
+            page: Int
+    ): Page<SimpleQuestionResponse> {
+        val pageable: Pageable = PageRequest.of(page, size)
+        return questionService.getAllContent(categories, pageable)
+    }
+
     @GetMapping("/not-answered")
     fun notAnsweredQuestionByCategories(
             @RequestParam(required = false, defaultValue = "")

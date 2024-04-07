@@ -19,6 +19,35 @@ class QuestionRepositoryImpl(
         private val queryFactory: JPAQueryFactory,
         private val questionConverter: QuestionConverter
 ) : QuestionRepositoryCustom {
+    override fun allQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        val qQuestion = QQuestion.question
+        val qComment = QComment.comment
+        val qQuestionCategory = QQuestionCategory.questionCategory
+
+        val questionsQuery = queryFactory.selectFrom(qQuestion)
+                .leftJoin(qQuestion.comments, qComment)
+                .fetchJoin()
+                .join(qQuestion.categories, qQuestionCategory)
+                .fetchJoin()
+                .where(qQuestionCategory.category.id.`in`(categories))
+                .orderBy(qQuestion.createdAt.desc())
+                .offset(pageable.offset)
+                .limit(pageable.pageSize.toLong())
+
+        val questions: List<Question> = questionsQuery.fetch()
+        val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
+
+        val countQuery = queryFactory.select(qQuestion.count())
+                .from(qQuestion)
+                .join(qQuestion.categories, qQuestionCategory)
+                .where(qQuestionCategory.category.id.`in`(categories))
+
+        val count: Long = countQuery.fetchOne() ?: 0L
+
+        return PageableExecutionUtils.getPage(dtoList, pageable) { count }
+
+    }
+
 
     override fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
         val qQuestion = QQuestion.question
@@ -40,7 +69,6 @@ class QuestionRepositoryImpl(
 
         val countQuery = queryFactory.select(qQuestion.count())
                 .from(qQuestion)
-                .leftJoin(qQuestion.comments, qComment)
                 .join(qQuestion.categories, qQuestionCategory)
                 .where(qQuestionCategory.category.id.`in`(categories))
 
@@ -92,12 +120,12 @@ class QuestionRepositoryImpl(
         val questions: List<Question> = questionsQuery.fetch()
         val dtoList: List<SimpleQuestionResponse> = questions.map { questionConverter.toSimpleResponse(it) }
 
-        val countQuery= queryFactory
+        val countQuery = queryFactory
                 .select(qQuestion.count())
                 .from(qQuestion)
                 .join(qQuestion.categories, qQuestionCategory)
                 .where(qQuestionCategory.category.id.`in`(categories))
-        val count: Long = countQuery.fetchOne()?:0L
+        val count: Long = countQuery.fetchOne() ?: 0L
 
         return PageableExecutionUtils.getPage(dtoList, pageable) { count }
     }
