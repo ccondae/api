@@ -19,8 +19,8 @@ class Question(
         var viewCount: Long = 0,
 
         @field: OneToMany(mappedBy = "question", fetch = FetchType.EAGER)
-        var categories: List<QuestionCategory> = listOf(),
+        var categories: Set<QuestionCategory> = setOf<QuestionCategory>(),
 
         @field: OneToMany(mappedBy ="question")
-        var comments: List<Comment> = mutableListOf<Comment>()
+        var comments: Set<Comment> = setOf<Comment>()
 )

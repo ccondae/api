@@ -29,7 +29,7 @@ class QuestionConverter(
                 content = dto.content,
                 code = dto.code,
                 purpose = dto.purpose,
-                categories = categories.toList(),
+                categories = categories.toSet(),
                 createdAt = LocalDateTime.now()
         )
         categories.forEach {
