@@ -54,34 +54,25 @@ class QuestionService(private val questionRepository: QuestionRepository, privat
     }
 
     fun getPopularContents(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
-        var newCategories: List<Long>
-        categories.let { category ->
-            newCategories = if (category.isEmpty()) {
-                val categories: List<Long> = categoryService.findAll().map { it.id!! }
-                categories
-            } else {
-                category.map { it.toLong() }
-            }
-        }
-
-        return questionRepository.getPopularQuestion(newCategories, pageable)
+        val newCategories: List<Long> = prepareCategoryList(categories)
+        val result = questionRepository.getPopularQuestion(newCategories, pageable)
+        return result
     }
 
     fun notAnsweredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
-        var newCategories: List<Long>
-        categories.let { category ->
-            newCategories = if (category.isEmpty()) {
-                val categories: List<Long> = categoryService.findAll().map { it.id!! }
-                categories
-            } else {
-                category.map { it.toLong() }
-            }
-        }
+        val newCategories: List<Long> = prepareCategoryList(categories)
         val result = questionRepository.notAnsweredQuestionByCategories(newCategories, pageable)
         return result
     }
 
     fun answeredQuestionByCategories(categories: List<Long>, pageable: Pageable): Page<SimpleQuestionResponse> {
+        var newCategories: List<Long> = prepareCategoryList(categories)
+
+        val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
+        return result
+    }
+
+    private fun prepareCategoryList(categories: List<Long>): List<Long> {
         var newCategories: List<Long>
         categories.let { category ->
             newCategories = if (category.isEmpty()) {
@@ -91,9 +82,7 @@ class QuestionService(private val questionRepository: QuestionRepository, privat
                 category.map { it.toLong() }
             }
         }
-
-        val result = questionRepository.answeredQuestionByCategories(newCategories, pageable)
-        return result
+        return newCategories
     }
 
     fun search(keyword: String): List<SimpleQuestionResponse> {

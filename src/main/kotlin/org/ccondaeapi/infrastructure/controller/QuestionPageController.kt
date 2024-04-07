@@ -45,7 +45,6 @@ class QuestionPageController(
     fun getPopularQuestions(
             @RequestParam(required = false, defaultValue = "")
             categories: List<Long>,
-
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
             @RequestParam(required = false, defaultValue = "0")
