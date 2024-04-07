@@ -66,7 +66,7 @@ class QuestionController(
         return questionService.answeredQuestionByCategories( pageable)
     }
 
-    @PostMapping("/page/popular")
+    @GetMapping("/page/popular")
     fun getPopularQuestions(
             @RequestParam(required = false, defaultValue = "10")
             size: Int,
